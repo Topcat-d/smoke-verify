@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smoke-verify"
+version = "0.1.0"
+description = "Offline verifier for smoke.attestation.v0 tamper-evident AI-agent action logs"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+# The wire contract (schema/canonicalization) is pure stdlib; `cryptography`
+# is pulled in only for the ECDSA-P256 signature-verification path.
+dependencies = ["cryptography>=42"]
+
+[project.urls]
+Homepage = "https://github.com/Topcat-d/smoke-verify"
+
+[project.scripts]
+smoke-verify = "smoke_verify.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["smoke_verify*"]

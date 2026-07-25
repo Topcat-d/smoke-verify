@@ -1,0 +1,14 @@
+{
+  "name": "smoke-verify",
+  "version": "0.1.0",
+  "description": "Offline verifier for smoke.attestation.v0 tamper-evident AI-agent action logs (zero-dependency)",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=22" },
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test test/verify.test.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install ./python[dev]
+      - run: pytest python/tests -q
+      # Conformance is against the committed bytes: the CLI must accept the
+      # golden chains pinned to the committed fingerprint, and the tamper demo
+      # must detect its own mutation.
+      - run: smoke-verify verify-all conformance/chains --trusted-spki-sha256 f758402958548503ac391ad9859dea4f8f1a2137d3cbee3069bc1f2a5ab23da9
+      - run: smoke-verify tamper conformance/chains/valid_basic.jsonl -o ${{ runner.temp }}/tampered.jsonl
+
+  typescript:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm test
+        working-directory: ts

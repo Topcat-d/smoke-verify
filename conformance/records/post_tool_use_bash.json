@@ -1,0 +1,22 @@
+{
+  "name": "post_tool_use_bash",
+  "record": {
+    "version": "smoke.attestation.v0",
+    "event_id": "evt-0002",
+    "session_id": "run-2026-06-02-abc123",
+    "sequence": 2,
+    "event_type": "post_tool_use",
+    "tool_name": "Bash",
+    "tool_input_sha256": "1df8bccaec747dc615b50678f35bf5b51756a45f9b2b77b247c7a617fde58b3e",
+    "tool_output_sha256": "c760981f7755f8fd133ff78f2b6381f159af7d1f2cb343b7bff3e09242474abd",
+    "timestamp_unix_ns": 1750000000987654321,
+    "actor": "claude-code",
+    "cwd": "/work/demo",
+    "repo": "example.com/acme/agent-project",
+    "prev_entry_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+    "signer_key_id": "agent-dev-0"
+  },
+  "canonical_utf8": "{\"actor\":\"claude-code\",\"cwd\":\"/work/demo\",\"event_id\":\"evt-0002\",\"event_type\":\"post_tool_use\",\"prev_entry_hash\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"repo\":\"example.com/acme/agent-project\",\"sequence\":2,\"session_id\":\"run-2026-06-02-abc123\",\"signer_key_id\":\"agent-dev-0\",\"timestamp_unix_ns\":1750000000987654321,\"tool_input_sha256\":\"1df8bccaec747dc615b50678f35bf5b51756a45f9b2b77b247c7a617fde58b3e\",\"tool_name\":\"Bash\",\"tool_output_sha256\":\"c760981f7755f8fd133ff78f2b6381f159af7d1f2cb343b7bff3e09242474abd\",\"version\":\"smoke.attestation.v0\"}",
+  "entry_hash": "3a8a00d19fb312b27c133b868eab08c804f59f22efce22a42c1d5bbdd9adf845",
+  "signed_digest": "a77b05ed933f90c7e0390e179f166b61e5dc605b35a4306914f202c84b52badf"
+}

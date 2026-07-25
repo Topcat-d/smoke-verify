@@ -1,0 +1,22 @@
+{
+  "name": "genesis_session_start",
+  "record": {
+    "version": "smoke.attestation.v0",
+    "event_id": "evt-0000",
+    "session_id": "run-2026-06-02-abc123",
+    "sequence": 0,
+    "event_type": "session_start",
+    "tool_name": null,
+    "tool_input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tool_output_sha256": null,
+    "timestamp_unix_ns": 1750000000000000000,
+    "actor": "claude-code",
+    "cwd": "/work/demo",
+    "repo": "example.com/acme/agent-project",
+    "prev_entry_hash": null,
+    "signer_key_id": "agent-dev-0"
+  },
+  "canonical_utf8": "{\"actor\":\"claude-code\",\"cwd\":\"/work/demo\",\"event_id\":\"evt-0000\",\"event_type\":\"session_start\",\"prev_entry_hash\":null,\"repo\":\"example.com/acme/agent-project\",\"sequence\":0,\"session_id\":\"run-2026-06-02-abc123\",\"signer_key_id\":\"agent-dev-0\",\"timestamp_unix_ns\":1750000000000000000,\"tool_input_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"tool_name\":null,\"tool_output_sha256\":null,\"version\":\"smoke.attestation.v0\"}",
+  "entry_hash": "4f6f9e229a3175c7945cfa62b2cf1fcbfecc3f6541ad8ccfbffaba78fe045dd1",
+  "signed_digest": "a70186a6b119224ac33e8724e95447a3d210367797fa20cbc8a3a20f8a7a8fd5"
+}

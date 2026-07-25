@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+node_modules/
+.pytest_cache/
+*.tampered.jsonl
+audit.html

@@ -1,0 +1,22 @@
+{
+  "name": "session_end",
+  "record": {
+    "version": "smoke.attestation.v0",
+    "event_id": "evt-0004",
+    "session_id": "run-2026-06-02-abc123",
+    "sequence": 4,
+    "event_type": "session_end",
+    "tool_name": null,
+    "tool_input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tool_output_sha256": null,
+    "timestamp_unix_ns": 18446744073709551615,
+    "actor": "system",
+    "cwd": null,
+    "repo": null,
+    "prev_entry_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+    "signer_key_id": "agent-dev-0"
+  },
+  "canonical_utf8": "{\"actor\":\"system\",\"cwd\":null,\"event_id\":\"evt-0004\",\"event_type\":\"session_end\",\"prev_entry_hash\":\"4444444444444444444444444444444444444444444444444444444444444444\",\"repo\":null,\"sequence\":4,\"session_id\":\"run-2026-06-02-abc123\",\"signer_key_id\":\"agent-dev-0\",\"timestamp_unix_ns\":18446744073709551615,\"tool_input_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"tool_name\":null,\"tool_output_sha256\":null,\"version\":\"smoke.attestation.v0\"}",
+  "entry_hash": "19a71993f80310443e495a783f4a305f6784e022255d12a4345bbc39745c3e15",
+  "signed_digest": "25ef10f58595f50a1e1af60b494013289db4e7df01c9878a40660eb577a6aeb2"
+}

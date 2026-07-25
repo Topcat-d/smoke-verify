@@ -1,0 +1,22 @@
+{
+  "name": "unicode_paths",
+  "record": {
+    "version": "smoke.attestation.v0",
+    "event_id": "evt-0003",
+    "session_id": "run-é中文",
+    "sequence": 3,
+    "event_type": "pre_tool_use",
+    "tool_name": "Edit",
+    "tool_input_sha256": "03d059695071aab40e383b865816364f800fe473e55e42fee4a77d9a625a5e96",
+    "tool_output_sha256": null,
+    "timestamp_unix_ns": 1750000001000000000,
+    "actor": "sdk",
+    "cwd": "/work/café",
+    "repo": "リポ/smoke",
+    "prev_entry_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "signer_key_id": "agent-dev-0"
+  },
+  "canonical_utf8": "{\"actor\":\"sdk\",\"cwd\":\"/work/café\",\"event_id\":\"evt-0003\",\"event_type\":\"pre_tool_use\",\"prev_entry_hash\":\"3333333333333333333333333333333333333333333333333333333333333333\",\"repo\":\"リポ/smoke\",\"sequence\":3,\"session_id\":\"run-é中文\",\"signer_key_id\":\"agent-dev-0\",\"timestamp_unix_ns\":1750000001000000000,\"tool_input_sha256\":\"03d059695071aab40e383b865816364f800fe473e55e42fee4a77d9a625a5e96\",\"tool_name\":\"Edit\",\"tool_output_sha256\":null,\"version\":\"smoke.attestation.v0\"}",
+  "entry_hash": "5f512ec4644c2665b97f8baac73cda0c32e11e895a6c688be6307f38319b835a",
+  "signed_digest": "8a03d217a5edd29d03c2a5e81e7bb6e4e3bf54db5c0e23958c31b2224886aa99"
+}

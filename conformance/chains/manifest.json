@@ -1,0 +1,27 @@
+{
+  "comment": "Golden signed chains for smoke.attestation.v0 verifier conformance. TEST-ONLY KEY — the seed below is public BY DESIGN so anyone can regenerate; never trust this key for anything but exercising a verifier.",
+  "generated": "2026-07-25",
+  "signer": {
+    "key_id": "conformance-test-0",
+    "spki_sha256": "f758402958548503ac391ad9859dea4f8f1a2137d3cbee3069bc1f2a5ab23da9",
+    "test_only_seed_utf8": "smoke-verify-conformance-test-key-v0",
+    "note": "software P-256 key derived deterministically from the seed; signature bytes are not deterministic (random k), so regeneration verifies equivalently but is not byte-identical"
+  },
+  "chains": {
+    "valid_basic.jsonl": {
+      "entries": 6,
+      "ended": true,
+      "session_id": "conformance-basic-0001"
+    },
+    "valid_unicode.jsonl": {
+      "entries": 4,
+      "ended": true,
+      "session_id": "conformance-unicode-0002"
+    },
+    "valid_unended.jsonl": {
+      "entries": 2,
+      "ended": false,
+      "session_id": "conformance-unended-0003"
+    }
+  }
+}

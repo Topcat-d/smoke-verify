@@ -1,0 +1,22 @@
+{
+  "name": "pre_tool_use_bash",
+  "record": {
+    "version": "smoke.attestation.v0",
+    "event_id": "evt-0001",
+    "session_id": "run-2026-06-02-abc123",
+    "sequence": 1,
+    "event_type": "pre_tool_use",
+    "tool_name": "Bash",
+    "tool_input_sha256": "1df8bccaec747dc615b50678f35bf5b51756a45f9b2b77b247c7a617fde58b3e",
+    "tool_output_sha256": null,
+    "timestamp_unix_ns": 1750000000123456789,
+    "actor": "claude-code",
+    "cwd": "/work/demo",
+    "repo": "example.com/acme/agent-project",
+    "prev_entry_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "signer_key_id": "agent-dev-0"
+  },
+  "canonical_utf8": "{\"actor\":\"claude-code\",\"cwd\":\"/work/demo\",\"event_id\":\"evt-0001\",\"event_type\":\"pre_tool_use\",\"prev_entry_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"repo\":\"example.com/acme/agent-project\",\"sequence\":1,\"session_id\":\"run-2026-06-02-abc123\",\"signer_key_id\":\"agent-dev-0\",\"timestamp_unix_ns\":1750000000123456789,\"tool_input_sha256\":\"1df8bccaec747dc615b50678f35bf5b51756a45f9b2b77b247c7a617fde58b3e\",\"tool_name\":\"Bash\",\"tool_output_sha256\":null,\"version\":\"smoke.attestation.v0\"}",
+  "entry_hash": "91b891133d64706f9f02229751457dae49287d6eddebc04c9146a2371a7c64e9",
+  "signed_digest": "b2c3ab336c813f2bbec732d8e757cc849170ba57fb07f0dd83647027bb4d8cce"
+}
