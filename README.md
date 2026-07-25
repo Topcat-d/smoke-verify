@@ -34,7 +34,7 @@ Read this before relying on a green result.
 | A committed record was dropped, reordered, or replayed | **CAUGHT** — sequence + chain-link break |
 | The log was truncated mid-entry (partial line) | **CAUGHT** — fail-closed, never ignored |
 | The log was signed by the key *you expected* | **CAUGHT only if you pin** (`--trusted-spki-sha256`) — an unpinned chain is *internally consistent*, not authentic |
-| The chain was cut at an entry boundary (rollback to a valid prefix) | **NOT caught by verification alone** — use `--require-ended`, and pin the head with `smoke-verify anchor` published to a place the operator doesn't control |
+| The chain was cut at an entry boundary (rollback to a valid prefix) | **NOT caught by verification alone** — use `--require-ended`, and anchor the head externally (see *Trusted-time anchoring* below): a witnessed anchor makes any post-anchor rewrite contradict evidence outside the operator's control |
 | An event was suppressed *before* it was ever committed | **NOT caught, by design** — the log truthfully records what was committed, not everything that happened. Closing this requires an enforced collection boundary, not a stronger log format |
 
 The precise claim: **records in the log were not altered after they were
@@ -61,15 +61,54 @@ it exits nonzero on any failure.
 | `verify` / `verify-all` | verify one log / every log in a directory |
 | `inspect` | readable chain summary + timeline |
 | `diff` | exact field diff against a trusted reference copy |
-| `anchor` | emit/check a chain-head anchor (publish it externally to pin history) |
+| `anchor` | emit a chain-head anchor, optionally witnessed by external TSAs / a git mirror |
 | `export` | audit artifact — html for humans, json/md for automation |
 | `tamper` | demo: mutate a copy, watch detection + recovery |
+
+### Trusted-time anchoring
+
+Signatures + the hash chain prove the log wasn't edited *without the signing
+key*. They cannot stop the **key holder** from rewriting history and
+re-signing it, or from rolling back to an older valid prefix. Anchoring
+closes that: publish the chain head somewhere the operator doesn't control,
+and every earlier entry is pinned as of that moment (each entry hash
+transitively commits to the whole prefix).
+
+```bash
+# Operator (or anyone holding the log), periodically:
+smoke-verify anchor session.jsonl --tsa-url digicert --tsa-url sigstore -o anchor.json
+#   → RFC 3161 timestamp authorities sign SHA-256(head) at their clock, their key.
+#     Outages are RECORDED in the anchor (status: error), never hidden.
+#     --git-dir <repo> additionally commits the head to a git mirror.
+
+# Relying party, later — fully offline:
+smoke-verify verify session.jsonl \
+    --trusted-spki-sha256 <signer-fp> \
+    --anchor anchor.json --tsa-spki-b64 <pinned-TSA-key>
+```
+
+Verification is fail-closed and pinned, mirroring the chain trust model: a
+token that doesn't bind this head, doesn't verify under the pinned TSA key,
+or is missing where claimed fails the run. Without a pinned TSA key the
+witness is checked structurally but reported **UNVERIFIED** and fails unless
+you explicitly pass `--allow-unverified-witness` — an unverified witness
+never silently reads as trusted time. After a witnessed anchor exists, the
+insured/operator cannot present a different history for the anchored prefix
+— even re-signed under the same key — without contradicting a timestamp they
+don't control.
+
+`conformance/anchors/` carries witnessed-anchor fixtures (valid, corrupt
+signature, wrong key, imprint mismatch) minted by a synthetic TEST-ONLY TSA
+so the whole path is exercised offline in CI. Not claimed: X.509 path
+validation to a public root, or eIDAS qualified-timestamp status — you pin
+the TSA key you trust.
 
 ### TypeScript
 
 `ts/` is a zero-dependency verifier for Node ≥ 22 (native TS). Same accepts,
 same rejects, byte-for-byte canonicalization parity with Python — enforced in
-CI against the committed golden vectors. `cd ts && npm test`.
+CI against the committed golden vectors. `cd ts && npm test`. (Anchor witness
+verification is currently Python-only; the TS port covers chain verification.)
 
 ## The format
 

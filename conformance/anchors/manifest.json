@@ -1,0 +1,24 @@
+{
+  "comment": "Witness fixtures for anchor trusted-time verification. TEST-ONLY: tokens are minted by a synthetic vector TSA whose private scalar is public knowledge (0x2a*32 / wrong key 0x3b*32) \u2014 they exercise the verifier and grant nothing.",
+  "anchored_chain": "../chains/valid_basic.jsonl",
+  "head_entry_hash": "f9cb7e51061a27b0b993bdb761a72fa12223bc53584da0908444e922668df1c4",
+  "imprint_rule": "messageImprint = SHA-256(ascii(lowercase-hex head_entry_hash))",
+  "pinned_tsa_spki_b64": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEDJAdQjyDHKheJ8c8JjuhMnIbudeoTE8DgLKmdW/WATMciHAjTeyHhQTBdBRPpLFLZqZRaRYG2Bc+Vb0344FWng==",
+  "gen_time": "20260712000000Z",
+  "fixtures": {
+    "anchor_witnessed.json": {
+      "expect": "verified when pinned; unverified without pin",
+      "witnesses_ok": 1,
+      "witness_errors_recorded": 1
+    },
+    "anchor_witness_badsig.json": {
+      "expect": "invalid (token_signature)"
+    },
+    "anchor_witness_wrongkey.json": {
+      "expect": "invalid under the pinned key (token_signature)"
+    },
+    "anchor_witness_imprint_mismatch.json": {
+      "expect": "invalid (token_imprint)"
+    }
+  }
+}

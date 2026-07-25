@@ -1,0 +1,18 @@
+{
+  "type": "smoke-attest-anchor",
+  "version": "smoke.attestation.v0",
+  "session_id": "conformance-basic-0001",
+  "key_id": "conformance-test-0",
+  "spki_sha256": "f758402958548503ac391ad9859dea4f8f1a2137d3cbee3069bc1f2a5ab23da9",
+  "count": 6,
+  "head_entry_hash": "f9cb7e51061a27b0b993bdb761a72fa12223bc53584da0908444e922668df1c4",
+  "witnesses": [
+    {
+      "type": "rfc3161",
+      "url": "https://tsa-vector.example",
+      "status": "ok",
+      "gen_time": "20260712000000Z",
+      "token_b64": "MIIBcQYJKoZIhvcNAQcCoIIBYjCCAV4CAQMxDzANBglghkgBZQMEAgEFADBpBgsqhkiG9w0BCRABBKBaBFgwVgIBAQYKKwYBBAGGjR8BATAxMA0GCWCGSAFlAwQCAQUABCDuBq+1lmCJ5aFKHzzyFAOcsHwC1pDZSp6eeTvTzt9pUgIBARgPMjAyNjA3MTIwMDAwMDBaMYHcMIHZAgEBMCEwGzEZMBcGA1UEAwwQU21va2UgVmVjdG9yIFRTQQICEAEwDQYJYIZIAWUDBAIBBQCgTTAaBgkqhkiG9w0BCQMxDQYLKoZIhvcNAQkQAQQwLwYJKoZIhvcNAQkEMSIEIMoFyyUPPuAqpJfSlnVBczXcTN/9/hWPBWxQ0MTf57HiMAoGCCqGSM49BAMCBEcwRQIhAPLvyeNJbI7ZcvFeWwIxEQlI0VC6pB86WQulleeve99FAiByGYZS/0lSYNYylyLQxe/lG19C3D9exToP2rl1G+0LLA=="
+    }
+  ]
+}

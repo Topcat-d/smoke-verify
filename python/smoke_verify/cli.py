@@ -84,7 +84,10 @@ def cmd_verify(args: argparse.Namespace) -> int:
                         "(--require-ended; possible truncation)"
     anchor_ok = True
     if getattr(args, "anchor", None):
+        import base64 as _b64
+
         from .anchor import check_anchor
+        from .witness import verify_anchor_witnesses
 
         anchor = json.loads(Path(args.anchor).read_text(encoding="utf-8"))
         ar = check_anchor(args.log, anchor)
@@ -96,6 +99,22 @@ def cmd_verify(args: argparse.Namespace) -> int:
         if not ar.ok:
             out["ok"] = False
             out["reason"] = out["reason"] or ar.reason
+        # Witness layer: only meaningful once the anchor itself binds this log.
+        if ar.ok and anchor.get("witnesses"):
+            pins = [_b64.b64decode(b) for b in (getattr(args, "tsa_spki_b64", None) or [])]
+            w_ok, checks = verify_anchor_witnesses(
+                anchor, pinned_tsa_spki_ders=pins,
+                allow_unverified=getattr(args, "allow_unverified_witness", False),
+            )
+            out["anchor"]["witnesses"] = [
+                {"type": c.type, "status": c.status, "gen_time": c.gen_time,
+                 "reason": c.reason} for c in checks
+            ]
+            if not w_ok:
+                anchor_ok = False
+                out["ok"] = False
+                out["reason"] = out["reason"] or \
+                    "anchor witness check failed (see anchor.witnesses)"
     if not getattr(args, "quiet", False):
         print(json.dumps(out, indent=2))
     return 0 if (res.ok and not truncated and anchor_ok) else 1
@@ -276,12 +295,43 @@ def cmd_anchor(args: argparse.Namespace) -> int:
     except (ValueError, OSError) as e:
         sys.stderr.write(f"smoke-verify anchor: {e}\n")
         return 1
+
+    # External witnesses — trusted time. Acquisition never blocks anchoring:
+    # an unreachable witness is RECORDED (status: error), not dropped.
+    witnesses = []
+    from .witness import WELL_KNOWN_TSA_URLS, GitMirrorWitness, TSAClient
+
+    for url in (args.tsa_url or []):
+        url = WELL_KNOWN_TSA_URLS.get(url, url)
+        witnesses.append(TSAClient(url).request_witness(a["head_entry_hash"]))
+    if args.git_dir:
+        witnesses.append(GitMirrorWitness(args.git_dir).witness(
+            a["session_id"], a["count"], a["head_entry_hash"]))
+    if witnesses:
+        a["witnesses"] = witnesses
+
     text = json.dumps(a, indent=2)
     if args.output:
         Path(args.output).write_text(text + "\n", encoding="utf-8")
-        print(f"wrote {args.output} (anchor: {a['count']} entries, head {a['head_entry_hash'][:16]}...)")
+        wsum = ""
+        if witnesses:
+            n_ok = sum(1 for w in witnesses if w.get("status") == "ok")
+            wsum = f", witnesses: {n_ok}/{len(witnesses)} ok"
+        print(f"wrote {args.output} (anchor: {a['count']} entries, "
+              f"head {a['head_entry_hash'][:16]}...{wsum})")
     else:
         print(text)
+    for w in witnesses:
+        if w.get("status") == "error":
+            sys.stderr.write(f"smoke-verify anchor: witness {w.get('type')} "
+                             f"{w.get('url', w.get('repo', ''))} FAILED (recorded): "
+                             f"{w.get('error')}\n")
+    # Publishing an anchor that carries zero successful witnesses when
+    # witnesses were requested is worth a nonzero exit — the caller asked for
+    # trusted time and got none (the anchor file is still written, evidence
+    # of the attempt included).
+    if witnesses and not any(w.get("status") == "ok" for w in witnesses):
+        return 1
     return 0
 
 
@@ -640,6 +690,14 @@ def _build_parser() -> argparse.ArgumentParser:
                     help="fail (exit 1) if the chain does not end with session_end (truncation guard)")
     pv.add_argument("--anchor", default=None,
                     help="path to a previously-published anchor; fail if history diverges from it")
+    pv.add_argument("--tsa-spki-b64", action="append", default=None, metavar="B64",
+                    help="pinned TSA public key (base64 SPKI DER) for anchor witness "
+                         "verification; repeatable. Without a pin, rfc3161 witnesses "
+                         "are checked structurally but reported UNVERIFIED and fail "
+                         "the run unless --allow-unverified-witness")
+    pv.add_argument("--allow-unverified-witness", action="store_true",
+                    help="accept structurally-sound rfc3161 witnesses without a pinned "
+                         "TSA key (consistency only — NOT trusted time)")
     pv.add_argument("--quiet", "-q", action="store_true",
                     help="exit code only, no stdout (0 ok / 1 fail / 2 no trust anchor) — for CI")
     pv.set_defaults(func=cmd_verify)
@@ -674,6 +732,11 @@ def _build_parser() -> argparse.ArgumentParser:
     pan = sub.add_parser("anchor", help="emit a chain-head anchor to publish externally (append-only proof)")
     pan.add_argument("log")
     pan.add_argument("--output", "-o", default=None, help="write the anchor JSON to a file (default: stdout)")
+    pan.add_argument("--tsa-url", action="append", default=None, metavar="URL",
+                     help="RFC 3161 TSA endpoint to witness the chain head (repeatable; "
+                          "shortcuts: digicert, sigstore). Outages are recorded, never hidden")
+    pan.add_argument("--git-dir", default=None, metavar="PATH",
+                     help="git repository to append+commit the head into (git_mirror witness)")
     pan.set_defaults(func=cmd_anchor)
 
     pe = sub.add_parser("export", help="export an audit artifact (html for humans, json/md for agents)")

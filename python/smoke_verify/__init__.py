@@ -30,6 +30,12 @@ from .schema import (
     signed_digest,
 )
 from .verify import VerifyResult, verify_chain, verify_log
+from .witness import (
+    GitMirrorWitness,
+    TSAClient,
+    WitnessCheck,
+    verify_anchor_witnesses,
+)
 
 __version__ = "0.1.0"
 
@@ -46,14 +52,17 @@ __all__ = [
     "EVENT_TYPES",
     "FieldChange",
     "FieldDelta",
+    "GitMirrorWitness",
     "HEADER_TYPE",
     "LocalizeResult",
     "PublicKeyRefV0",
     "RECORD_FIELDS",
     "SignatureV0",
+    "TSAClient",
     "UnknownVersionError",
     "VERSION",
     "VerifyResult",
+    "WitnessCheck",
     "canonicalize",
     "check_anchor",
     "detect_version",
@@ -64,6 +73,7 @@ __all__ = [
     "sha256_hex",
     "signed_digest",
     "spki_fingerprint",
+    "verify_anchor_witnesses",
     "verify_chain",
     "verify_log",
     "verify_log_any",

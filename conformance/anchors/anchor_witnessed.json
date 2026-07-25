@@ -1,0 +1,24 @@
+{
+  "type": "smoke-attest-anchor",
+  "version": "smoke.attestation.v0",
+  "session_id": "conformance-basic-0001",
+  "key_id": "conformance-test-0",
+  "spki_sha256": "f758402958548503ac391ad9859dea4f8f1a2137d3cbee3069bc1f2a5ab23da9",
+  "count": 6,
+  "head_entry_hash": "f9cb7e51061a27b0b993bdb761a72fa12223bc53584da0908444e922668df1c4",
+  "witnesses": [
+    {
+      "type": "rfc3161",
+      "url": "https://tsa-vector.example",
+      "status": "ok",
+      "gen_time": "20260712000000Z",
+      "token_b64": "MIICmwYJKoZIhvcNAQcCoIICjDCCAogCAQMxDzANBglghkgBZQMEAgEFADBpBgsqhkiG9w0BCRABBKBaBFgwVgIBAQYKKwYBBAGGjR8BATAxMA0GCWCGSAFlAwQCAQUABCDuBq+1lmCJ5aFKHzzyFAOcsHwC1pDZSp6eeTvTzt9pUgIBARgPMjAyNjA3MTIwMDAwMDBaoIIBJjCCASIwgcqgAwIBAgICEAEwCgYIKoZIzj0EAwIwGzEZMBcGA1UEAwwQU21va2UgVmVjdG9yIFRTQTAeFw0yNjAxMDEwMDAwMDBaFw0zNjAxMDEwMDAwMDBaMBsxGTAXBgNVBAMMEFNtb2tlIFZlY3RvciBUU0EwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQMkB1CPIMcqF4nxzwmO6Eychu516hMTwOAsqZ1b9YBMxyIcCNN7IeFBMF0FE+ksUtmplFpFgbYFz5VvTfjgVaeMAoGCCqGSM49BAMCA0cAMEQCICo+S9sQ4barNByvhZ49uY4nJf3MgHxHghMW0Ac6+EZhAiACQ62Mtbf2aBV/n7wHWAjlHl4z9222NeGCxOC3hpRtCzGB3DCB2QIBATAhMBsxGTAXBgNVBAMMEFNtb2tlIFZlY3RvciBUU0ECAhABMA0GCWCGSAFlAwQCAQUAoE0wGgYJKoZIhvcNAQkDMQ0GCyqGSIb3DQEJEAEEMC8GCSqGSIb3DQEJBDEiBCDKBcslDz7gKqSX0pZ1QXM13Ezf/f4VjwVsUNDE3+ex4jAKBggqhkjOPQQDAgRHMEUCIQCdGS2dBhea2bnmRzSTYZArnRsjU48Tfa+ffZ87fFG71AIgLj5M8vHVN/ldn9ne5kwchAnXQTENgYcmOR8NdpJflQM="
+    },
+    {
+      "type": "rfc3161",
+      "url": "https://tsa-down.example",
+      "status": "error",
+      "error": "URLError: connection refused"
+    }
+  ]
+}
