@@ -82,6 +82,13 @@ test("field edit detected and localized", () => {
   assert.equal(loc.changes[0].field, "tool_name");
 });
 
+test("header-only log fails closed", () => {
+  const p = tamperCopy((lines) => lines.splice(1)); // keep header only
+  const res = verifyLog(p, { trustedSpkiSha256: TRUSTED_FP });
+  assert.equal(res.ok, false);
+  assert.match(res.reason ?? "", /no entries/);
+});
+
 test("dropped entry detected", () => {
   const p = tamperCopy((lines) => lines.splice(3, 1));
   const res = verifyLog(p, { trustedSpkiSha256: TRUSTED_FP });

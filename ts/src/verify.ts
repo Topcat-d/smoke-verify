@@ -19,7 +19,13 @@ export interface VerifyResult {
 }
 
 export interface VerifyOpts {
+  /** The trust anchor: expected signing key fingerprint (SHA-256 of SPKI DER). */
   trustedSpkiSha256?: string;
+  /**
+   * SECURITY: a FILTER on the header's key_id LABEL, not a trust anchor —
+   * a forger picks their own key_id, so matching it proves nothing about the
+   * key. Use only as an additional constraint beside trustedSpkiSha256.
+   */
   trustedKeyId?: string;
 }
 
@@ -71,6 +77,15 @@ export function verifyChain(header: any, envelopes: any[], opts: VerifyOpts = {}
   }
   if (sha256(spkiDer).toString("hex") !== header.spki_sha256) {
     return fail(0, null, "header spki_sha256 does not match spki_der", keyId);
+  }
+
+  // A header-only log carries zero signed statements (headers are unsigned),
+  // and the writer always emits session_start with the header — a legitimate
+  // 0-entry log does not exist. Fail closed.
+  if (envelopes.length === 0) {
+    return fail(0, null,
+      "chain has a header but no entries — an empty log proves nothing and is never a legitimate state (fail-closed)",
+      keyId);
   }
 
   let prev: string | null = null;

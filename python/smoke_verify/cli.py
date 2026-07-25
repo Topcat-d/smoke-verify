@@ -34,11 +34,24 @@ from .schema import AttestationError
 # ----------------------------------------------------------------------------
 
 def cmd_verify(args: argparse.Namespace) -> int:
-    pin = args.trusted_spki_sha256 or args.trusted_key_id
+    # SECURITY: only the SPKI fingerprint is a trust anchor. key_id is a label
+    # the log producer chooses freely — a forger sets it to whatever you
+    # expect — so it must never satisfy the pin requirement or earn the
+    # "pinned" trust label on its own.
+    pin = args.trusted_spki_sha256
+    if args.trusted_key_id and not pin and not args.trust_log_header:
+        sys.stderr.write(
+            "smoke-verify: --trusted-key-id alone is NOT a trust anchor — key_id is a "
+            "label chosen by whoever wrote the log, so matching it proves nothing about "
+            "the signing key. Pin the key itself with --trusted-spki-sha256 <fp> (use "
+            "--trusted-key-id only as an extra filter beside it), or pass "
+            "--trust-log-header to accept the embedded key (consistency only).\n"
+        )
+        return 2
     if not pin and not args.trust_log_header:
         sys.stderr.write(
             "smoke-verify: refusing to verify without a trust anchor. "
-            "Pass --trusted-spki-sha256 <fp> (and/or --trusted-key-id <id>) to prove the log "
+            "Pass --trusted-spki-sha256 <fp> to prove the log "
             "was signed by the expected key, or --trust-log-header to accept the key embedded "
             "in the log (internal consistency only — NOT authenticity).\n"
         )
@@ -125,11 +138,18 @@ def cmd_verify(args: argparse.Namespace) -> int:
 # ----------------------------------------------------------------------------
 
 def cmd_verify_all(args: argparse.Namespace) -> int:
-    pin = args.trusted_spki_sha256 or args.trusted_key_id
+    pin = args.trusted_spki_sha256  # key_id is a label, never an anchor (see cmd_verify)
+    if args.trusted_key_id and not pin and not args.trust_log_header:
+        sys.stderr.write(
+            "smoke-verify verify-all: --trusted-key-id alone is NOT a trust anchor "
+            "(key_id is a producer-chosen label). Pin with --trusted-spki-sha256 <fp>, "
+            "or pass --trust-log-header (consistency only).\n"
+        )
+        return 2
     if not pin and not args.trust_log_header:
         sys.stderr.write(
             "smoke-verify verify-all: refusing to verify without a trust anchor. Pass "
-            "--trusted-spki-sha256 <fp> (and/or --trusted-key-id <id>), or --trust-log-header "
+            "--trusted-spki-sha256 <fp>, or --trust-log-header "
             "to accept each log's own key (consistency only — NOT authenticity).\n"
         )
         return 2
@@ -207,7 +227,9 @@ def cmd_inspect(args: argparse.Namespace) -> int:
     # re-signed under the attacker's own key is still "internally consistent" —
     # so an UNPINNED ok result must NEVER be labeled plain "VALID" (a reader
     # would mistake consistency for authenticity).
-    pin = args.trusted_spki_sha256 or args.trusted_key_id
+    # Only a fingerprint pin earns the VALID (pinned) label — key_id is a
+    # producer-chosen label and proves nothing about the key (see cmd_verify).
+    pin = args.trusted_spki_sha256
     res = chainio.pick_verifier(version)(
         args.log,
         trusted_spki_sha256=args.trusted_spki_sha256,
@@ -400,8 +422,9 @@ def _build_summary(
         "chain_reason": res.reason,
         "broken_index": res.broken_index,
         "ended": res.ended,
-        "pinned": bool(trusted_spki_sha256 or trusted_key_id),
-        "trust": "pinned" if (trusted_spki_sha256 or trusted_key_id) else "log-header (unpinned)",
+        # key_id is a producer-chosen label — only the SPKI fingerprint pins.
+        "pinned": bool(trusted_spki_sha256),
+        "trust": "pinned" if trusted_spki_sha256 else "log-header (unpinned)",
         "tamper": tamper,
         "events": events,
     }
@@ -680,8 +703,12 @@ def _build_parser() -> argparse.ArgumentParser:
 
     pv = sub.add_parser("verify", help="verify a log (fail-closed on trust)")
     pv.add_argument("log")
-    pv.add_argument("--trusted-spki-sha256", default=None)
-    pv.add_argument("--trusted-key-id", default=None)
+    pv.add_argument("--trusted-spki-sha256", default=None,
+                    help="the trust anchor: expected signing key fingerprint (SHA-256 of SPKI DER)")
+    pv.add_argument("--trusted-key-id", default=None,
+                    help="EXTRA filter on the header's key_id label; NOT a trust anchor by "
+                         "itself (labels are producer-chosen) — requires --trusted-spki-sha256 "
+                         "or --trust-log-header")
     pv.add_argument("--trust-log-header", action="store_true",
                     help="accept the key embedded in the log (consistency only, NOT authenticity)")
     pv.add_argument("--explain", action="store_true",
@@ -704,8 +731,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
     pva = sub.add_parser("verify-all", help="verify every *.jsonl log in a directory (exit 1 if any fail)")
     pva.add_argument("dir")
-    pva.add_argument("--trusted-spki-sha256", default=None)
-    pva.add_argument("--trusted-key-id", default=None)
+    pva.add_argument("--trusted-spki-sha256", default=None,
+                     help="the trust anchor: expected signing key fingerprint (SHA-256 of SPKI DER)")
+    pva.add_argument("--trusted-key-id", default=None,
+                     help="EXTRA filter on the key_id label; NOT a trust anchor by itself")
     pva.add_argument("--trust-log-header", action="store_true",
                      help="accept each log's own key (consistency only, NOT authenticity)")
     pva.add_argument("--require-ended", action="store_true",

@@ -55,10 +55,16 @@ def verify_chain(
     trusted_key_id: Optional[str] = None,
 ) -> VerifyResult:
     """Verify a chain. Internal consistency only proves the log is consistent
-    under WHATEVER key it carries — pass `trusted_spki_sha256` (and/or
-    `trusted_key_id`) to also prove it was signed by the EXPECTED key. Without a
-    pin, an attacker who rewrites the log and signs it with their own key
-    produces a self-consistent but untrusted chain that internal checks accept.
+    under WHATEVER key it carries — pass `trusted_spki_sha256` to also prove it
+    was signed by the EXPECTED key. Without a pin, an attacker who rewrites the
+    log and signs it with their own key produces a self-consistent but
+    untrusted chain that internal checks accept.
+
+    SECURITY: `trusted_key_id` is a FILTER on the header's key_id LABEL, not a
+    trust anchor — a forger picks their own key_id, so matching it proves
+    nothing about the key. Only `trusted_spki_sha256` (a hash of the actual
+    public key) establishes authenticity; use `trusted_key_id` only as an
+    additional constraint alongside it.
     """
     # Trust-anchor pinning (external authenticity), checked before anything else.
     if trusted_spki_sha256 is not None and header.spki_sha256 != trusted_spki_sha256:
@@ -80,6 +86,16 @@ def verify_chain(
         return _fail(0, None, "header key is not an EC public key", header.key_id)
     if spki_fingerprint(spki_der) != header.spki_sha256:
         return _fail(0, None, "header spki_sha256 does not match spki_der", header.key_id)
+
+    # A header-only log carries zero signed statements: nothing binds it to the
+    # key holder (headers are unsigned), so "valid" would be a fabricated empty
+    # session. The writer always emits session_start with the header — a
+    # legitimate 0-entry log does not exist. Fail closed.
+    if not envelopes:
+        return _fail(0, None,
+                     "chain has a header but no entries — an empty log proves "
+                     "nothing and is never a legitimate state (fail-closed)",
+                     header.key_id)
 
     prev_eh: Optional[str] = None
     for i, env in enumerate(envelopes):
@@ -130,9 +146,11 @@ def verify_log(
     that entry index (STRICT: a truncated final line is a verification
     failure, never silently ignored).
 
-    Pass `trusted_spki_sha256` (and/or `trusted_key_id`) to require the log was
-    signed by an externally-pinned key, not merely self-consistent under the
-    key it carries. Callers making an authenticity claim SHOULD pin."""
+    Pass `trusted_spki_sha256` to require the log was signed by an
+    externally-pinned key, not merely self-consistent under the key it
+    carries. Callers making an authenticity claim MUST pin the fingerprint;
+    `trusted_key_id` filters the header's label only and is NOT an anchor
+    (see verify_chain)."""
     p = Path(path)
     try:
         raw = p.read_text(encoding="utf-8")
