@@ -13,8 +13,39 @@ requires-python = ">=3.10"
 # is pulled in only for the ECDSA-P256 signature-verification path.
 dependencies = ["cryptography>=42"]
 
+keywords = [
+    "attestation",
+    "audit",
+    "agent",
+    "ai-agent",
+    "tamper-evident",
+    "hash-chain",
+    "verifier",
+    "provenance",
+    "security",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Legal Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Security :: Cryptography",
+    "Topic :: System :: Logging",
+    "Topic :: Software Development :: Testing",
+]
+
 [project.urls]
 Homepage = "https://github.com/Topcat-d/smoke-verify"
+Repository = "https://github.com/Topcat-d/smoke-verify"
+Issues = "https://github.com/Topcat-d/smoke-verify/issues"
 
 [project.scripts]
 smoke-verify = "smoke_verify.cli:main"

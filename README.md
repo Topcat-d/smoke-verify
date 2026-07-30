@@ -16,7 +16,8 @@ produced the log, and without any hosted service.
 > *relying party's* machine. Try it in 10 seconds:
 >
 > ```
-> pip install ./python
+> pip install smoke-verify
+> git clone https://github.com/Topcat-d/smoke-verify && cd smoke-verify
 > smoke-verify tamper conformance/chains/valid_basic.jsonl
 > ```
 >
@@ -42,10 +43,26 @@ committed, and an independent party can verify that offline without trusting
 the producer.** The log being *complete* is a different property with a
 different mechanism.
 
-## Quickstart
+## Install
 
 ```bash
-pip install ./python
+pip install smoke-verify
+```
+
+Python 3.10+. Or install from a source checkout: `pip install ./python`
+(add `[dev]` to pull in `pytest` for running the test suite).
+
+`ts/` is a separate, zero-dependency TypeScript verifier for Node >= 22 —
+see [TypeScript](#typescript) below.
+
+## Quickstart
+
+The commands below assume a clone of this repository (they read golden
+vectors from `conformance/`) — the `pip install smoke-verify` above already
+gives you the `smoke-verify` CLI itself.
+
+```bash
+git clone https://github.com/Topcat-d/smoke-verify && cd smoke-verify
 smoke-verify verify conformance/chains/valid_basic.jsonl \
     --trusted-spki-sha256 f758402958548503ac391ad9859dea4f8f1a2137d3cbee3069bc1f2a5ab23da9
 smoke-verify inspect conformance/chains/valid_basic.jsonl
