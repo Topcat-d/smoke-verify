@@ -8,6 +8,11 @@ version = "0.1.0"
 description = "Offline verifier for smoke.attestation.v0 tamper-evident AI-agent action logs"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "Apache-2.0"}
+# `python/LICENSE` is a copy of the repo-root LICENSE. The copy is required,
+# not redundant: the build root is `python/`, so the root file is out of reach
+# of the sdist/wheel and the published package would otherwise ship with no
+# licence text at all. Keep the two byte-identical.
+authors = [{name = "Topcat-d", email = "top.dylan.m@gmail.com"}]
 requires-python = ">=3.10"
 # The wire contract (schema/canonicalization) is pure stdlib; `cryptography`
 # is pulled in only for the ECDSA-P256 signature-verification path.
